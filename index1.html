@@ -3,109 +3,526 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>For My Beautiful Shahara</title>
-    <!-- SHA-256 Library for password hashing -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sha256/0.9.0/sha256.min.js"></script>
+    <title>Anniversary Countdown for Shahara</title>
     <style>
-        /* Previous CSS styles here */
-
-        /* Login Modal Styles */
-        .login-modal {
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
             display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            color: #fff;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .container {
+            text-align: center;
+            z-index: 1;
+            padding: 2rem;
+            background-color: rgba(0, 0, 0, 0.4);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            width: 90%;
+        }
+        
+        h1 {
+            margin-bottom: 0.5rem;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .message {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            font-style: italic;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .countdown {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        
+        .countdown-segment {
+            margin: 0 1rem;
+        }
+        
+        .countdown-number {
+            font-size: 3rem;
+            font-weight: bold;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            min-width: 80px;
+            display: inline-block;
+        }
+        
+        .countdown-label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            margin-top: 0.5rem;
+        }
+        
+        .hearts {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .heart {
+            position: absolute;
+            font-size: 1.5rem;
+            animation: falling linear infinite;
+            opacity: 0.6;
+            user-select: none;
+        }
+        
+        @keyframes falling {
+            0% {
+                transform: translateY(-10vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .controls {
+            margin-top: 1rem;
+        }
+        
+        button {
+            background-color: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin: 0 0.5rem;
+        }
+        
+        button:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .footer {
+            position: absolute;
+            bottom: 1rem;
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+        
+        .surprise-button {
+            background-color: #ff4081;
+            color: white;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            border: none;
+            margin-top: 2rem;
+            cursor: pointer;
+            animation: pulse 1.5s infinite;
+            box-shadow: 0 0 20px rgba(255, 64, 129, 0.6);
+            transition: all 0.3s;
+        }
+        
+        .surprise-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255, 64, 129, 0.8);
+            background-color: #ff5a92;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        .surprise-page {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.7);
+            background: linear-gradient(135deg, #8a2387 0%, #e94057 50%, #f27121 100%);
+            display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
+            flex-direction: column;
+            z-index: 100;
+            transform: translateY(100%);
+            transition: transform 0.5s ease-in-out;
+            overflow: auto;
+            padding: 2rem;
+            box-sizing: border-box;
         }
-
-        .login-box {
-            background: #fff;
-            padding: 30px;
-            border-radius: 15px;
+        
+        .surprise-page.active {
+            transform: translateY(0);
+        }
+        
+        .surprise-content {
             text-align: center;
-            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            max-width: 800px;
+            padding: 2rem;
+            background-color: rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
         }
-
-        .login-input {
-            width: 200px;
-            padding: 10px;
-            margin: 10px;
-            border: 2px solid #ff6b6b;
-            border-radius: 25px;
+        
+        .surprise-page h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: white;
         }
-
-        .audio-controls {
+        
+        .surprise-page p {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+            color: white;
+        }
+        
+        .surprise-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .placeholder-image {
+            width: 100%;
+            aspect-ratio: 4/3;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+        
+        .back-button {
+            background-color: white;
+            color: #e94057;
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 50px;
+            border: none;
+            margin-top: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .back-button:hover {
+            background-color: #f5f5f5;
+            transform: scale(1.05);
+        }
+        
+        .message-fade {
+            animation: fadeMessage 2s infinite;
+        }
+        
+        @keyframes fadeMessage {
+            0%, 100% {
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+        
+        /* Add styles for the locked message */
+        .locked-message {
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(255,255,255,0.2);
-            padding: 10px;
-            border-radius: 25px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 200;
+            text-align: center;
+            max-width: 80%;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            animation: fadeIn 0.3s forwards;
+            display: none;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
     </style>
 </head>
 <body>
-    <!-- Login Modal -->
-    <div class="login-modal" id="loginModal">
-        <div class="login-box">
-            <h2>🔒 Our Special Place</h2>
-            <form onsubmit="return checkLogin(event)">
-                <input type="text" id="username" class="login-input" 
-                       placeholder="Username" required>
-                <input type="password" id="password" class="login-input" 
-                       placeholder="Password" required>
-                <button type="submit" class="surprise-button">Unlock Our Love</button>
-            </form>
-            <p id="loginError" style="color: red; display: none;">Wrong credentials, my love! ❤️</p>
+    <div class="hearts" id="hearts"></div>
+    
+    <div class="container">
+        <h1>Our Anniversary Countdown</h1>
+        <div class="message" id="message">For my beloved Shahara</div>
+        
+        <div class="countdown">
+            <div class="countdown-segment">
+                <div class="countdown-number" id="days">00</div>
+                <div class="countdown-label">Days</div>
+            </div>
+            <div class="countdown-segment">
+                <div class="countdown-number" id="hours">00</div>
+                <div class="countdown-label">Hours</div>
+            </div>
+            <div class="countdown-segment">
+                <div class="countdown-number" id="minutes">00</div>
+                <div class="countdown-label">Minutes</div>
+            </div>
+            <div class="countdown-segment">
+                <div class="countdown-number" id="seconds">00</div>
+                <div class="countdown-label">Seconds</div>
+            </div>
+        </div>
+        
+        <p>Until our special day - March 25, 2025</p>
+        
+        <div class="controls">
+            <button id="musicToggle">Pause Music</button>
+        </div>
+        
+        <button class="surprise-button" id="surpriseButton">Click For A Special Surprise</button>
+    </div>
+    
+    <div class="locked-message" id="lockedMessage">
+        <h3>Surprise is Locked</h3>
+        <p>This special surprise will unlock on our anniversary - March 25!</p>
+        <button onclick="document.getElementById('lockedMessage').style.display='none'">Close</button>
+    </div>
+    
+    <div class="surprise-page" id="surprisePage">
+        <div class="surprise-content">
+            <h2>My Love Letter to Shahara</h2>
+            
+            <p>Dearest Shahara,</p>
+            
+            <p>As our anniversary approaches, I wanted to take a moment to express just how much you mean to me. Every day with you is a gift that I cherish deeply.</p>
+            
+            <p>From the moment we met, you've filled my life with joy, laughter, and unconditional love. Your smile brightens even my darkest days, and your strength inspires me to be a better person.</p>
+            
+            <p>Our journey together has been beautiful, with memories that I'll treasure forever. I'm grateful for every moment we've shared, every challenge we've overcome, and every dream we've pursued together.</p>
+            
+            <h3>Our Special Memories</h3>
+            
+            <div class="surprise-gallery">
+                <div class="placeholder-image">Our First Date</div>
+                <div class="placeholder-image">Vacation Together</div>
+                <div class="placeholder-image">Family Gathering</div>
+                <div class="placeholder-image">Special Moment</div>
+                <div class="placeholder-image">Our Anniversary</div>
+                <div class="placeholder-image">Beautiful Memories</div>
+            </div>
+            
+            <p>I promise to continue loving you, supporting you, and walking beside you through all of life's adventures. You are my partner, my confidant, and my best friend.</p>
+            
+            <p>As we celebrate another year together, know that my love for you only grows stronger with each passing day.</p>
+            
+            <p>Forever yours,</p>
+            <p>Your loving partner</p>
+            
+            <button class="back-button" id="backButton">Back to Countdown</button>
         </div>
     </div>
-
-    <!-- Main Content (hidden until login) -->
-    <div id="mainContent" style="display: none;">
-        <!-- Previous content here -->
-    </div>
-
-    <!-- Audio Player -->
-    <div class="audio-controls">
-        <audio id="backgroundMusic" loop>
-            <source src="your-song.mp3" type="audio/mpeg">
-            Your browser does not support the audio element.
-        </audio>
-        <button onclick="toggleMusic()">🎵 Toggle Music</button>
-    </div>
-
+    
+    <audio id="backgroundMusic" loop>
+        <source src="https://cdnjs.cloudflare.com/ajax/libs/musicfiles/1.0.0/romantic-melody.mp3" type="audio/mpeg">
+        <!-- Fallback to placeholder since audio files aren't directly available -->
+    </audio>
+    
     <script>
-        // Password Configuration (SHA-256 hash of "meow")
-        const CORRECT_USERNAME = 'Sami';
-        const PASSWORD_HASH = '8e6d5e836a13d6d90d36afa9a0a6d54c110fafe749a3736564c8fae0e93e6e34'; 
-
-        function checkLogin(event) {
-            event.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = sha256(document.getElementById('password').value);
-
-            if(username === CORRECT_USERNAME && password === PASSWORD_HASH) {
-                document.getElementById('loginModal').style.display = 'none';
-                document.getElementById('mainContent').style.display = 'block';
-                document.getElementById('backgroundMusic').play();
-                return false;
+        // Target date: March 25, 2025
+        const targetDate = new Date('March 25, 2025 00:00:00').getTime();
+        
+        // Update countdown every second
+        const countdown = setInterval(function() {
+            // Get current date and time
+            const now = new Date().getTime();
+            
+            // Find the distance between now and the target date
+            const distance = targetDate - now;
+            
+            // Time calculations
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            
+            // Display the result
+            document.getElementById('days').innerHTML = days.toString().padStart(2, '0');
+            document.getElementById('hours').innerHTML = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').innerHTML = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').innerHTML = seconds.toString().padStart(2, '0');
+            
+            // If the countdown is finished
+            if (distance < 0) {
+                clearInterval(countdown);
+                document.querySelector('.container').innerHTML = '<h1>Happy Anniversary Shahara!</h1><p>Today is our special day!</p>';
+            }
+        }, 1000);
+        
+        // Create falling hearts
+        const heartsContainer = document.getElementById('hearts');
+        const heartSymbols = ['❤️', '💕', '💖', '💗', '💓'];
+        
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.innerHTML = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = Math.random() * 15 + 5 + 's';
+            heartsContainer.appendChild(heart);
+            
+            // Remove heart after animation completes
+            setTimeout(() => {
+                heart.remove();
+            }, 20000);
+        }
+        
+        // Create hearts periodically
+        setInterval(createHeart, 300);
+        
+        // Initial hearts
+        for (let i = 0; i < 20; i++) {
+            setTimeout(createHeart, 100 * i);
+        }
+        
+        // Auto-changing messages - Bangla song romantic lines
+        const messages = [
+            "তোমাকে ভালোবাসি আমি অনেক বেশি",
+            "তোমার চোখে চোখ রেখে বলি আমি ভালোবাসি",
+            "তুমি শুধু আমার হবে, আমার হৃদয়ের মাঝে",
+            "তুমি আছো আমার হৃদয়ে সারাক্ষণ",
+            "আমার প্রেমের গল্প শুধু তোমার সাথে",
+            "ভালোবাসার বাঁধন দিয়ে বেঁধে ফেলেছি তোমায়",
+            "প্রেমে পড়ে গেছি আমি তোমার চোখের পাতায়",
+            "তোমার সাথে সময় কাটালে সব কিছু ভুলে যাই",
+            "তুমি আমার জীবনের সব সুন্দর গল্প",
+            "তোমার হাসিটা আমার জীবনের আলো"
+        ];
+        
+        const messageElement = document.getElementById('message');
+        let currentMessageIndex = 0;
+        
+        function changeMessage() {
+            messageElement.classList.add('message-fade');
+            
+            setTimeout(() => {
+                currentMessageIndex = (currentMessageIndex + 1) % messages.length;
+                messageElement.textContent = messages[currentMessageIndex];
+                
+                setTimeout(() => {
+                    messageElement.classList.remove('message-fade');
+                }, 100);
+            }, 1000);
+        }
+        
+        // Change message every 3 seconds
+        setInterval(changeMessage, 3000);
+        
+        // Music controls
+        const music = document.getElementById('backgroundMusic');
+        const musicToggle = document.getElementById('musicToggle');
+        
+        // Create a simple audio context to simulate background music
+        let audioContext;
+        let oscillator;
+        
+        function startBackgroundMusic() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
+                
+                gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.start();
+            } else if (audioContext.state === 'suspended') {
+                audioContext.resume();
             }
             
-            document.getElementById('loginError').style.display = 'block';
-            return false;
+            musicToggle.textContent = 'Pause Music';
         }
-
+        
         function toggleMusic() {
-            const music = document.getElementById('backgroundMusic');
-            music.paused ? music.play() : music.pause();
+            if (!audioContext || audioContext.state === 'suspended') {
+                startBackgroundMusic();
+            } else {
+                audioContext.suspend();
+                musicToggle.textContent = 'Play Music';
+            }
         }
-
-        // Previous JavaScript functions here
+        
+        musicToggle.addEventListener('click', toggleMusic);
+        
+        // Start music automatically when user interacts with the page
+        document.body.addEventListener('click', function() {
+            if (!audioContext) {
+                startBackgroundMusic();
+            }
+        }, { once: true });
+        
+        // Surprise page controls - Only unlock on March 25
+        const surpriseButton = document.getElementById('surpriseButton');
+        const surprisePage = document.getElementById('surprisePage');
+        const backButton = document.getElementById('backButton');
+        const lockedMessage = document.getElementById('lockedMessage');
+        
+        surpriseButton.addEventListener('click', function() {
+            const today = new Date();
+            const isAnniversary = (today.getMonth() === 2 && today.getDate() === 25); // March is month 2 (0-indexed)
+            
+            if (isAnniversary) {
+                surprisePage.classList.add('active');
+            } else {
+                lockedMessage.style.display = 'block';
+                setTimeout(() => {
+                    if (lockedMessage.style.display === 'block') {
+                        lockedMessage.style.display = 'none';
+                    }
+                }, 3000);
+            }
+        });
+        
+        backButton.addEventListener('click', function() {
+            surprisePage.classList.remove('active');
+        });
     </script>
 </body>
 </html>
