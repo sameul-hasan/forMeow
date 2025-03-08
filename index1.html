@@ -45,16 +45,20 @@
         }
         
         .message {
-            font-size: clamp(1rem, 3vw, 1.3rem);
+            font-size: clamp(0.9rem, 2.8vw, 1.2rem);
             margin-bottom: 1.5rem;
             font-style: italic;
-            height: clamp(60px, 15vh, 90px);
+            height: auto;
+            min-height: clamp(80px, 18vh, 120px);
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 0 10px;
             text-align: center;
-            line-height: 1.4;
+            line-height: 1.5;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            hyphens: auto;
         }
         
         .countdown {
@@ -433,9 +437,10 @@
         </div>
     </div>
     
+    <!-- Audio element with fallback sources -->
     <audio id="backgroundMusic" loop>
         <source src="m.mp3" type="audio/mpeg">
-        <!-- Fallback to placeholder since audio files aren't directly available -->
+        <source src="https://assets.codepen.io/4358584/Anitek_-_Komorebi.mp3" type="audio/mpeg">
     </audio>
     
     <script>
@@ -534,39 +539,15 @@
         // Initial start
         startHeartAnimation();
         
-        // Auto-changing messages - Bangla song romantic lines
+        // Auto-changing messages - Bangla song romantic lines - FIXED
         const messages = [
-           " চোরাবালি মন তোমার
-            কেন শুধু লুকিয়ে থাকো?
-            একটু আড়াল হয়ে আমায় দেখো "
-           " চোরাবালি মন তোমার
-            কেন শুধু লুকিয়ে থাকো?
-            একটু আড়াল হয়ে আমায় দেখো "
-           " যদি কোনো চিত্র আঁকি
-            পৃথিবীর সবচেয়ে দামী
-            সে চিত্রতে তুমি perfectly বসো "
-          "  কেন লাগে শূন্য শূন্য বলো
-            তোমায় ছাড়া এত?
-            তুমি কি তা বলতে পারো? "
-           " কেন লাগে শূন্য শূন্য বলো
-            তোমায় ছাড়া এত?
-            তুমি কি তা বলতে পারো? "
-           " তুমিও কি কাজের ফাঁকে
-            মনে করো আমার নাম?
-            আমার মতো করে তোমায়
-            চাবে না কেউ, বলে দিলাম "
-          " তবু মনের কিছু আশা
-            এমন করে ভালোবাসা
-            তোমার স্মৃতি আমার কাছে
-            খুব আদরে ভালো আছে "
-           " তবু মনে কিছু আশা
-            এমন করে ভালোবাসা "
-           " কেন লাগে শূন্য শূন্য বলো
-            তোমায় ছাড়া এত?
-            তুমি কি তা বলতে পারো? "
-           " কেন লাগে শূন্য শূন্য বলো
-            তোমায় ছাড়া এত?
-            তুমি কি তা বলতে পারো? "
+           "চোরাবালি মন তোমার কেন শুধু লুকিয়ে থাকো? একটু আড়াল হয়ে আমায় দেখো",
+           "যদি কোনো চিত্র আঁকি পৃথিবীর সবচেয়ে দামী সে চিত্রতে তুমি perfectly বসো",
+           "কেন লাগে শূন্য শূন্য বলো তোমায় ছাড়া এত? তুমি কি তা বলতে পারো?",
+           "তুমিও কি কাজের ফাঁকে মনে করো আমার নাম? আমার মতো করে তোমায় চাবে না কেউ, বলে দিলাম",
+           "তবু মনের কিছু আশা এমন করে ভালোবাসা তোমার স্মৃতি আমার কাছে খুব আদরে ভালো আছে",
+           "তবু মনে কিছু আশা এমন করে ভালোবাসা",
+           "কেন লাগে শূন্য শূন্য বলো তোমায় ছাড়া এত? তুমি কি তা বলতে পারো?"
         ];
         
         const messageElement = document.getElementById('message');
@@ -606,54 +587,77 @@
         // Initial start
         startMessageRotation();
         
-        // Music controls - Optimized for mobile
+        // Music controls - Improved for better compatibility
         const music = document.getElementById('backgroundMusic');
         const musicToggle = document.getElementById('musicToggle');
         
-        // Create a simple audio context to simulate background music
+        // First try to use the HTML5 audio element
+        function toggleMusic() {
+            try {
+                if (music.paused) {
+                    const playPromise = music.play();
+                    
+                    if (playPromise !== undefined) {
+                        playPromise.then(_ => {
+                            musicToggle.textContent = 'Pause Music';
+                        }).catch(error => {
+                            console.log("Audio play failed, trying Web Audio API:", error);
+                            startBackgroundMusic(); // Fallback to Web Audio API
+                        });
+                    }
+                } else {
+                    music.pause();
+                    musicToggle.textContent = 'Play Music';
+                    
+                    // If we have a Web Audio context active, suspend it too
+                    if (audioContext && audioContext.state === 'running') {
+                        audioContext.suspend();
+                    }
+                }
+            } catch (e) {
+                console.log("Error with HTML5 Audio, trying Web Audio API:", e);
+                startBackgroundMusic();
+            }
+        }
+        
+        // Fallback Web Audio API if HTML5 Audio fails
         let audioContext;
         let oscillator;
         let audioAttempted = false;
         
         function startBackgroundMusic() {
             try {
-                if (audioAttempted) return;
-                audioAttempted = true;
-                
-                if (!audioContext) {
-                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                    oscillator = audioContext.createOscillator();
-                    const gainNode = audioContext.createGain();
-                    
-                    oscillator.type = 'sine';
-                    oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
-                    
-                    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-                    
-                    oscillator.connect(gainNode);
-                    gainNode.connect(audioContext.destination);
-                    
-                    oscillator.start();
-                } else if (audioContext.state === 'suspended') {
-                    audioContext.resume();
+                if (audioAttempted && audioContext) {
+                    if (audioContext.state === 'suspended') {
+                        audioContext.resume();
+                        musicToggle.textContent = 'Pause Music';
+                    } else if (audioContext.state === 'running') {
+                        audioContext.suspend();
+                        musicToggle.textContent = 'Play Music';
+                    }
+                    return;
                 }
                 
+                audioAttempted = true;
+                
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
+                
+                gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.start();
                 musicToggle.textContent = 'Pause Music';
             } catch (e) {
                 console.log('Audio context error:', e);
                 musicToggle.textContent = 'Music Unavailable';
                 musicToggle.disabled = true;
-            }
-        }
-        
-        function toggleMusic(e) {
-            if (e) e.stopPropagation();
-            
-            if (!audioContext || audioContext.state === 'suspended') {
-                startBackgroundMusic();
-            } else {
-                audioContext.suspend();
-                musicToggle.textContent = 'Play Music';
             }
         }
         
@@ -669,8 +673,7 @@
         const lockedMessage = document.getElementById('lockedMessage');
         
         function checkAnniversaryDate() {
-            // Get current date - for testing purposes, you might want to modify this
-            // to simulate March 25 for testing the unlocked content
+            // Get current date
             const today = new Date();
             
             // Check if the date is March 25 (month 2 in JavaScript is March)
@@ -725,6 +728,10 @@
                 document.title = "Happy Anniversary, Shahara! ❤️";
             }
         }
+        
+        // Since today is March 8, 2025 and the anniversary is on March 25, 2025, 
+        // let's update the title to reflect we're getting closer
+        document.title = "Only " + daysUntilAnniversary + " Days Until Our Anniversary! ❤️";
     </script>
 </body>
 </html>
