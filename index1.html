@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Beautiful Shahara</title>
+    <!-- SHA-256 Library for password hashing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sha256/0.9.0/sha256.min.js"></script>
+    <style>
+        /* Previous CSS styles here */
+
+        /* Login Modal Styles */
+        .login-modal {
+            display: flex;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .login-box {
+            background: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+        }
+
+        .login-input {
+            width: 200px;
+            padding: 10px;
+            margin: 10px;
+            border: 2px solid #ff6b6b;
+            border-radius: 25px;
+        }
+
+        .audio-controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            padding: 10px;
+            border-radius: 25px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Modal -->
+    <div class="login-modal" id="loginModal">
+        <div class="login-box">
+            <h2>🔒 Our Special Place</h2>
+            <form onsubmit="return checkLogin(event)">
+                <input type="text" id="username" class="login-input" 
+                       placeholder="Username" required>
+                <input type="password" id="password" class="login-input" 
+                       placeholder="Password" required>
+                <button type="submit" class="surprise-button">Unlock Our Love</button>
+            </form>
+            <p id="loginError" style="color: red; display: none;">Wrong credentials, my love! ❤️</p>
+        </div>
+    </div>
+
+    <!-- Main Content (hidden until login) -->
+    <div id="mainContent" style="display: none;">
+        <!-- Previous content here -->
+    </div>
+
+    <!-- Audio Player -->
+    <div class="audio-controls">
+        <audio id="backgroundMusic" loop>
+            <source src="your-song.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+        <button onclick="toggleMusic()">🎵 Toggle Music</button>
+    </div>
+
+    <script>
+        // Password Configuration (SHA-256 hash of "meow")
+        const CORRECT_USERNAME = 'Sami';
+        const PASSWORD_HASH = '8e6d5e836a13d6d90d36afa9a0a6d54c110fafe749a3736564c8fae0e93e6e34'; 
+
+        function checkLogin(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = sha256(document.getElementById('password').value);
+
+            if(username === CORRECT_USERNAME && password === PASSWORD_HASH) {
+                document.getElementById('loginModal').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+                document.getElementById('backgroundMusic').play();
+                return false;
+            }
+            
+            document.getElementById('loginError').style.display = 'block';
+            return false;
+        }
+
+        function toggleMusic() {
+            const music = document.getElementById('backgroundMusic');
+            music.paused ? music.play() : music.pause();
+        }
+
+        // Previous JavaScript functions here
+    </script>
+</body>
+</html>
