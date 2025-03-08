@@ -2,74 +2,85 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Anniversary Countdown for Shahara</title>
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
             color: #fff;
-            overflow: hidden;
+            overflow-x: hidden;
             position: relative;
         }
         
         .container {
             text-align: center;
             z-index: 1;
-            padding: 2rem;
+            padding: 1.5rem;
             background-color: rgba(0, 0, 0, 0.4);
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             max-width: 600px;
-            width: 90%;
+            width: 92%;
+            margin: 15px;
         }
         
         h1 {
             margin-bottom: 0.5rem;
-            font-size: 2.5rem;
+            font-size: 2rem;
             text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
         }
         
         .message {
-            font-size: 1.5rem;
-            margin-bottom: 2rem;
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
             font-style: italic;
-            height: 60px;
+            height: 80px;
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 0 10px;
+            text-align: center;
+            line-height: 1.4;
         }
         
         .countdown {
             display: flex;
+            flex-wrap: wrap;
             justify-content: center;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
         
         .countdown-segment {
-            margin: 0 1rem;
+            margin: 0.5rem;
         }
         
         .countdown-number {
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: bold;
             background-color: rgba(255, 255, 255, 0.1);
-            padding: 1rem;
+            padding: 0.8rem;
             border-radius: 10px;
-            min-width: 80px;
+            min-width: 65px;
             display: inline-block;
         }
         
         .countdown-label {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             text-transform: uppercase;
-            margin-top: 0.5rem;
+            margin-top: 0.3rem;
         }
         
         .hearts {
@@ -78,6 +89,7 @@
             height: 100%;
             pointer-events: none;
             z-index: 0;
+            overflow: hidden;
         }
         
         .heart {
@@ -107,6 +119,8 @@
         
         .controls {
             margin-top: 1rem;
+            display: flex;
+            justify-content: center;
         }
         
         button {
@@ -118,9 +132,11 @@
             cursor: pointer;
             transition: background-color 0.3s;
             margin: 0 0.5rem;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
         
-        button:hover {
+        button:hover, button:active {
             background-color: rgba(255, 255, 255, 0.3);
         }
         
@@ -134,18 +150,19 @@
         .surprise-button {
             background-color: #ff4081;
             color: white;
-            padding: 1rem 2rem;
-            font-size: 1.2rem;
+            padding: 0.8rem 1.5rem;
+            font-size: 1.1rem;
             border-radius: 50px;
             border: none;
-            margin-top: 2rem;
+            margin-top: 1.5rem;
             cursor: pointer;
             animation: pulse 1.5s infinite;
             box-shadow: 0 0 20px rgba(255, 64, 129, 0.6);
             transition: all 0.3s;
+            -webkit-tap-highlight-color: transparent;
         }
         
-        .surprise-button:hover {
+        .surprise-button:hover, .surprise-button:active {
             transform: scale(1.05);
             box-shadow: 0 0 30px rgba(255, 64, 129, 0.8);
             background-color: #ff5a92;
@@ -177,8 +194,8 @@
             z-index: 100;
             transform: translateY(100%);
             transition: transform 0.5s ease-in-out;
-            overflow: auto;
-            padding: 2rem;
+            overflow-y: auto;
+            padding: 1rem;
             box-sizing: border-box;
         }
         
@@ -189,30 +206,34 @@
         .surprise-content {
             text-align: center;
             max-width: 800px;
-            padding: 2rem;
+            width: 100%;
+            padding: 1.5rem;
             background-color: rgba(255, 255, 255, 0.15);
             border-radius: 20px;
             backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            margin: 1rem 0;
         }
         
         .surprise-page h2 {
-            font-size: 2.5rem;
+            font-size: 2rem;
             margin-bottom: 1.5rem;
             color: white;
         }
         
         .surprise-page p {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             margin-bottom: 1rem;
             line-height: 1.6;
             color: white;
+            padding: 0 0.5rem;
         }
         
         .surprise-gallery {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1rem;
-            margin: 2rem 0;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 0.8rem;
+            margin: 1.5rem 0;
         }
         
         .placeholder-image {
@@ -224,6 +245,9 @@
             justify-content: center;
             align-items: center;
             color: white;
+            padding: 0.5rem;
+            font-size: 0.9rem;
+            text-align: center;
         }
         
         .back-button {
@@ -234,11 +258,13 @@
             border-radius: 50px;
             border: none;
             margin-top: 1.5rem;
+            margin-bottom: 1rem;
             cursor: pointer;
             transition: all 0.3s;
+            -webkit-tap-highlight-color: transparent;
         }
         
-        .back-button:hover {
+        .back-button:hover, .back-button:active {
             background-color: #f5f5f5;
             transform: scale(1.05);
         }
@@ -258,9 +284,9 @@
         
         /* Add styles for the locked message */
         .locked-message {
-            background-color: rgba(0, 0, 0, 0.7);
+            background-color: rgba(0, 0, 0, 0.8);
             color: white;
-            padding: 15px 25px;
+            padding: 15px 20px;
             border-radius: 10px;
             position: fixed;
             top: 50%;
@@ -268,15 +294,80 @@
             transform: translate(-50%, -50%);
             z-index: 200;
             text-align: center;
-            max-width: 80%;
+            max-width: 90%;
+            width: 300px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             animation: fadeIn 0.3s forwards;
             display: none;
         }
         
+        .locked-message h3 {
+            margin-bottom: 10px;
+        }
+        
+        .locked-message button {
+            margin-top: 15px;
+            background-color: #ff4081;
+        }
+        
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
+        }
+        
+        /* Media queries for better mobile compatibility */
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .message {
+                font-size: 1.1rem;
+                height: 90px;
+            }
+            
+            .countdown-number {
+                font-size: 2rem;
+                min-width: 55px;
+                padding: 0.6rem;
+            }
+            
+            .surprise-button {
+                padding: 0.7rem 1.2rem;
+                font-size: 1rem;
+            }
+            
+            .surprise-page h2 {
+                font-size: 1.7rem;
+            }
+            
+            .surprise-page p {
+                font-size: 1rem;
+            }
+            
+            .surprise-gallery {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+        }
+        
+        @media (max-width: 350px) {
+            .countdown-segment {
+                margin: 0.3rem;
+            }
+            
+            .countdown-number {
+                font-size: 1.8rem;
+                min-width: 50px;
+                padding: 0.5rem;
+            }
+            
+            .countdown-label {
+                font-size: 0.7rem;
+            }
+            
+            .message {
+                height: 100px;
+            }
         }
     </style>
 </head>
@@ -309,7 +400,7 @@
         <p>Until our special day - March 25, 2025</p>
         
         <div class="controls">
-            <button id="musicToggle">Pause Music</button>
+            <button id="musicToggle">Play Music</button>
         </div>
         
         <button class="surprise-button" id="surpriseButton">Click For A Special Surprise</button>
@@ -388,14 +479,28 @@
             if (distance < 0) {
                 clearInterval(countdown);
                 document.querySelector('.container').innerHTML = '<h1>Happy Anniversary Shahara!</h1><p>Today is our special day!</p>';
+                // If it's the anniversary day, automatically show the surprise
+                const today = new Date();
+                if (today.getMonth() === 2 && today.getDate() === 25) {
+                    setTimeout(() => {
+                        document.getElementById('surprisePage').classList.add('active');
+                    }, 2000);
+                }
             }
         }, 1000);
         
-        // Create falling hearts
+        // Optimize heart creation for mobile
         const heartsContainer = document.getElementById('hearts');
         const heartSymbols = ['❤️', '💕', '💖', '💗', '💓'];
+        const isMobile = window.innerWidth < 768;
+        const heartFrequency = isMobile ? 500 : 300; // Fewer hearts on mobile
+        const maxHearts = isMobile ? 15 : 30; // Limit total hearts on screen
+        let activeHearts = 0;
         
         function createHeart() {
+            if (activeHearts >= maxHearts) return;
+            
+            activeHearts++;
             const heart = document.createElement('div');
             heart.classList.add('heart');
             heart.innerHTML = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
@@ -406,14 +511,15 @@
             // Remove heart after animation completes
             setTimeout(() => {
                 heart.remove();
+                activeHearts--;
             }, 20000);
         }
         
         // Create hearts periodically
-        setInterval(createHeart, 300);
+        setInterval(createHeart, heartFrequency);
         
         // Initial hearts
-        for (let i = 0; i < 20; i++) {
+        for (let i = 0; i < (isMobile ? 10 : 20); i++) {
             setTimeout(createHeart, 100 * i);
         }
         
@@ -450,7 +556,7 @@
         // Change message every 3 seconds
         setInterval(changeMessage, 3000);
         
-        // Music controls
+        // Music controls - Optimized for mobile
         const music = document.getElementById('backgroundMusic');
         const musicToggle = document.getElementById('musicToggle');
         
@@ -459,25 +565,31 @@
         let oscillator;
         
         function startBackgroundMusic() {
-            if (!audioContext) {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                oscillator = audioContext.createOscillator();
-                const gainNode = audioContext.createGain();
+            try {
+                if (!audioContext) {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.type = 'sine';
+                    oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
+                    
+                    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    oscillator.start();
+                } else if (audioContext.state === 'suspended') {
+                    audioContext.resume();
+                }
                 
-                oscillator.type = 'sine';
-                oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
-                
-                gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                
-                oscillator.start();
-            } else if (audioContext.state === 'suspended') {
-                audioContext.resume();
+                musicToggle.textContent = 'Pause Music';
+            } catch (e) {
+                console.log('Audio context error:', e);
+                musicToggle.textContent = 'Music Unavailable';
+                musicToggle.disabled = true;
             }
-            
-            musicToggle.textContent = 'Pause Music';
         }
         
         function toggleMusic() {
@@ -490,13 +602,10 @@
         }
         
         musicToggle.addEventListener('click', toggleMusic);
-        
-        // Start music automatically when user interacts with the page
-        document.body.addEventListener('click', function() {
-            if (!audioContext) {
-                startBackgroundMusic();
-            }
-        }, { once: true });
+        musicToggle.addEventListener('touchend', function(e) {
+            e.preventDefault(); // Prevent double-trigger on mobile
+            toggleMusic();
+        }, { passive: false });
         
         // Surprise page controls - Only unlock on March 25
         const surpriseButton = document.getElementById('surpriseButton');
@@ -504,11 +613,13 @@
         const backButton = document.getElementById('backButton');
         const lockedMessage = document.getElementById('lockedMessage');
         
-        surpriseButton.addEventListener('click', function() {
+        function checkAnniversaryDate() {
             const today = new Date();
-            const isAnniversary = (today.getMonth() === 2 && today.getDate() === 25); // March is month 2 (0-indexed)
-            
-            if (isAnniversary) {
+            return (today.getMonth() === 2 && today.getDate() === 25); // March is month 2 (0-indexed)
+        }
+        
+        surpriseButton.addEventListener('click', function() {
+            if (checkAnniversaryDate()) {
                 surprisePage.classList.add('active');
             } else {
                 lockedMessage.style.display = 'block';
@@ -523,6 +634,33 @@
         backButton.addEventListener('click', function() {
             surprisePage.classList.remove('active');
         });
+        
+        // Handle touch events properly for mobile
+        document.addEventListener('touchstart', function() {}, {passive: true});
+        
+        // Handle device orientation changes
+        window.addEventListener('resize', function() {
+            // Update mobile detection
+            const wasDesktop = !isMobile;
+            const newIsMobile = window.innerWidth < 768;
+            
+            // Only update if there was a change in device type
+            if (wasDesktop !== newIsMobile) {
+                // Clear all hearts and recreate them for the new device type
+                heartsContainer.innerHTML = '';
+                activeHearts = 0;
+                
+                // Create initial hearts for the new device type
+                for (let i = 0; i < (newIsMobile ? 10 : 20); i++) {
+                    setTimeout(createHeart, 100 * i);
+                }
+            }
+        });
+        
+        // Set default text content for user agent that might not have autoplay
+        if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+            musicToggle.textContent = 'Play Music';
+        }
     </script>
 </body>
 </html>
