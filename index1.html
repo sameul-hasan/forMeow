@@ -622,12 +622,7 @@
             if (checkAnniversaryDate()) {
                 surprisePage.classList.add('active');
             } else {
-                lockedMessage.style.display = 'block';
-                setTimeout(() => {
-                    if (lockedMessage.style.display === 'block') {
-                        lockedMessage.style.display = 'none';
-                    }
-                }, 3000);
+                surprisePage.classList.add('active');
             }
         });
         
