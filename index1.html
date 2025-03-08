@@ -24,6 +24,20 @@
             color: #fff;
             overflow-x: hidden;
             position: relative;
+            background-size: 400% 400%;
+            animation: gradientBackground 15s ease infinite;
+        }
+        
+        @keyframes gradientBackground {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
         }
         
         .container {
@@ -36,6 +50,8 @@
             max-width: 600px;
             width: 92%;
             margin: 15px;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
         }
         
         h1 {
@@ -59,6 +75,7 @@
             overflow-wrap: break-word;
             word-wrap: break-word;
             hyphens: auto;
+            transition: opacity 0.5s ease-in-out;
         }
         
         .countdown {
@@ -84,6 +101,14 @@
             border-radius: 10px;
             min-width: clamp(50px, 15vw, 80px);
             display: inline-block;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .countdown-segment:hover .countdown-number {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            background-color: rgba(255, 255, 255, 0.2);
         }
         
         .countdown-label {
@@ -141,13 +166,14 @@
             padding: clamp(0.4rem, 2vw, 0.8rem) clamp(0.8rem, 3vw, 1.5rem);
             border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: all 0.3s;
             -webkit-tap-highlight-color: transparent;
             touch-action: manipulation;
         }
         
         button:hover, button:active {
             background-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
         }
         
         .surprise-button {
@@ -193,6 +219,8 @@
             width: 100%;
             height: 100%;
             background: linear-gradient(135deg, #8a2387 0%, #e94057 50%, #f27121 100%);
+            background-size: 400% 400%;
+            animation: gradientBackground 15s ease infinite;
             display: flex;
             justify-content: center;
             align-items: flex-start;
@@ -261,6 +289,12 @@
             padding: 0.5rem;
             font-size: clamp(0.8rem, 2.5vw, 1rem);
             text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .placeholder-image:hover {
+            transform: scale(1.05);
+            background-color: rgba(255, 255, 255, 0.3);
         }
         
         .back-button {
@@ -283,12 +317,12 @@
         }
         
         .message-fade {
-            animation: fadeMessage 2s infinite;
+            animation: fadeMessage 3s infinite;
         }
         
         @keyframes fadeMessage {
             0%, 100% {
-                opacity: 0;
+                opacity: 0.2;
             }
             50% {
                 opacity: 1;
@@ -334,6 +368,60 @@
             to { opacity: 1; }
         }
         
+        /* Music indicator */
+        .music-indicator {
+            display: inline-flex;
+            align-items: center;
+            margin-left: 8px;
+        }
+        
+        .music-wave {
+            display: inline-block;
+            width: 3px;
+            height: 12px;
+            margin-right: 2px;
+            background: #fff;
+            animation: wave 1s infinite ease-in-out;
+        }
+        
+        .music-wave:nth-child(1) {
+            animation-delay: 0s;
+        }
+        
+        .music-wave:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .music-wave:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes wave {
+            0%, 100% {
+                height: 4px;
+            }
+            50% {
+                height: 12px;
+            }
+        }
+        
+        .music-indicator.paused .music-wave {
+            animation-play-state: paused;
+            height: 4px;
+        }
+
+        /* Days remaining indicator */
+        .days-remaining {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(255, 64, 129, 0.8);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            z-index: 10;
+        }
+        
         /* Improved responsive styling */
         @media (orientation: landscape) and (max-height: 500px) {
             .container {
@@ -364,6 +452,7 @@
 </head>
 <body>
     <div class="hearts" id="hearts"></div>
+    <div class="days-remaining" id="daysRemaining"></div>
     
     <div class="container">
         <h1>Our Anniversary Countdown</h1>
@@ -391,7 +480,13 @@
         <p>Until our special day - March 25, 2025</p>
         
         <div class="controls">
-            <button id="musicToggle">Play Music</button>
+            <button id="musicToggle">Play Music
+                <span class="music-indicator paused" id="musicIndicator">
+                    <span class="music-wave"></span>
+                    <span class="music-wave"></span>
+                    <span class="music-wave"></span>
+                </span>
+            </button>
         </div>
         
         <button class="surprise-button" id="surpriseButton">Click For A Special Surprise</button>
@@ -442,104 +537,32 @@
         <source src="m.mp3" type="audio/mpeg">
         <source src="https://assets.codepen.io/4358584/Anitek_-_Komorebi.mp3" type="audio/mpeg">
     </audio>
-    
     <script>
-        // Target date: March 25, 2025
-        const targetDate = new Date('March 25, 2025 00:00:00').getTime();
+        // ----- Constants and Configuration -----
+        const ANNIVERSARY_DATE = 'March 25, 2025 00:00:00';
+        const AUTOPLAY_MUSIC = true; // Set to true to attempt autoplay
         
-        // Update countdown every second
-        const countdown = setInterval(function() {
-            // Get current date and time
-            const now = new Date().getTime();
-            
-            // Find the distance between now and the target date
-            const distance = targetDate - now;
-            
-            // Time calculations
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-            
-            // Display the result
-            document.getElementById('days').innerHTML = days.toString().padStart(2, '0');
-            document.getElementById('hours').innerHTML = hours.toString().padStart(2, '0');
-            document.getElementById('minutes').innerHTML = minutes.toString().padStart(2, '0');
-            document.getElementById('seconds').innerHTML = seconds.toString().padStart(2, '0');
-            
-            // If the countdown is finished
-            if (distance < 0) {
-                clearInterval(countdown);
-                document.querySelector('.container').innerHTML = '<h1>Happy Anniversary Shahara!</h1><p>Today is our special day!</p>';
-                // If it's the anniversary day, automatically show the surprise
-                const today = new Date();
-                if (today.getMonth() === 2 && today.getDate() === 25) {
-                    setTimeout(() => {
-                        document.getElementById('surprisePage').classList.add('active');
-                    }, 2000);
-                }
-            }
-        }, 1000);
-        
-        // Optimize heart creation based on device performance
+        // ----- DOM Elements -----
+        const musicEl = document.getElementById('backgroundMusic');
+        const musicToggle = document.getElementById('musicToggle');
+        const musicIndicator = document.getElementById('musicIndicator');
+        const messageEl = document.getElementById('message');
+        const surpriseButton = document.getElementById('surpriseButton');
+        const surprisePage = document.getElementById('surprisePage');
+        const backButton = document.getElementById('backButton');
+        const lockedMessage = document.getElementById('lockedMessage');
+        const daysRemainingEl = document.getElementById('daysRemaining');
         const heartsContainer = document.getElementById('hearts');
-        const heartSymbols = ['❤️', '💕', '💖', '💗', '💓'];
+        
+        // ----- Calculate Target Date -----
+        const targetDate = new Date(ANNIVERSARY_DATE).getTime();
+        
+        // ----- Device/Browser Detection -----
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
         const isLowPowerDevice = isMobile && navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4;
-        const heartFrequency = isLowPowerDevice ? 800 : (isMobile ? 500 : 300);
-        const maxHearts = isLowPowerDevice ? 8 : (isMobile ? 15 : 30);
-        let activeHearts = 0;
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
         
-        function createHeart() {
-            if (activeHearts >= maxHearts) return;
-            if (document.hidden) return; // Don't create hearts when page is not visible
-            
-            activeHearts++;
-            const heart = document.createElement('div');
-            heart.classList.add('heart');
-            heart.innerHTML = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
-            heart.style.left = Math.random() * 100 + 'vw';
-            heart.style.animationDuration = Math.random() * 15 + 5 + 's';
-            heartsContainer.appendChild(heart);
-            
-            // Remove heart after animation completes
-            setTimeout(() => {
-                if (heart.parentNode === heartsContainer) {
-                    heart.remove();
-                }
-                activeHearts--;
-            }, 20000);
-        }
-        
-        let heartInterval;
-        
-        function startHeartAnimation() {
-            // Create hearts periodically
-            if (!heartInterval) {
-                heartInterval = setInterval(createHeart, heartFrequency);
-                
-                // Initial hearts - but fewer for low-power devices
-                const initialHearts = isLowPowerDevice ? 5 : (isMobile ? 10 : 20);
-                for (let i = 0; i < initialHearts; i++) {
-                    setTimeout(createHeart, 100 * i);
-                }
-            }
-        }
-        
-        // Start heart animation when page becomes visible
-        document.addEventListener("visibilitychange", function() {
-            if (document.hidden) {
-                clearInterval(heartInterval);
-                heartInterval = null;
-            } else {
-                startHeartAnimation();
-            }
-        });
-        
-        // Initial start
-        startHeartAnimation();
-        
-        // Auto-changing messages - Bangla song romantic lines - FIXED
+        // ----- Bangla song romantic lines -----
         const messages = [
            "চোরাবালি মন তোমার কেন শুধু লুকিয়ে থাকো? একটু আড়াল হয়ে আমায় দেখো",
            "যদি কোনো চিত্র আঁকি পৃথিবীর সবচেয়ে দামী সে চিত্রতে তুমি perfectly বসো",
@@ -550,139 +573,227 @@
            "কেন লাগে শূন্য শূন্য বলো তোমায় ছাড়া এত? তুমি কি তা বলতে পারো?"
         ];
         
-        const messageElement = document.getElementById('message');
+        // ----- Heart symbols for animation -----
+        const heartSymbols = ['❤️', '💕', '💖', '💗', '💓'];
+        
+        // ----- Countdown Timer -----
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+            
+            // Calculate time units
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            
+            // Update display
+            document.getElementById('days').innerHTML = days.toString().padStart(2, '0');
+            document.getElementById('hours').innerHTML = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').innerHTML = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').innerHTML = seconds.toString().padStart(2, '0');
+            
+            // Update days remaining indicator
+            daysRemainingEl.textContent = `${days} days remaining`;
+            
+            // If it's the anniversary
+            if (distance < 0) {
+                clearInterval(countdownTimer);
+                document.querySelector('.container').innerHTML = '<h1>Happy Anniversary Shahara!</h1><p>Today is our special day!</p>';
+                daysRemainingEl.textContent = `Happy Anniversary!`;
+                
+                // If it's the anniversary day, automatically show the surprise
+                if (checkAnniversaryDate()) {
+                    setTimeout(() => {
+                        surprisePage.classList.add('active');
+                    }, 2000);
+                }
+            }
+            
+            // Update page title based on countdown
+            document.title = `${days}d ${hours}h ${minutes}m - Anniversary Countdown ❤️`;
+        }
+        
+        const countdownTimer = setInterval(updateCountdown, 1000);
+        updateCountdown(); // Initial call
+        
+        // ----- Heart Animation -----
+        const heartFrequency = isLowPowerDevice ? 800 : (isMobile ? 500 : 300);
+        const maxHearts = isLowPowerDevice ? 8 : (isMobile ? 15 : 30);
+        let activeHearts = 0;
+        let heartInterval;
+        
+        function createHeart() {
+            if (activeHearts >= maxHearts) return;
+            if (document.hidden) return;
+            
+            activeHearts++;
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.innerHTML = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = Math.random() * 15 + 5 + 's';
+            heartsContainer.appendChild(heart);
+            
+            // Remove heart after animation
+            setTimeout(() => {
+                if (heart.parentNode === heartsContainer) {
+                    heart.remove();
+                }
+                activeHearts--;
+            }, 20000);
+        }
+        
+        function startHeartAnimation() {
+            if (!heartInterval) {
+                heartInterval = setInterval(createHeart, heartFrequency);
+                const initialHearts = isLowPowerDevice ? 5 : (isMobile ? 10 : 20);
+                for (let i = 0; i < initialHearts; i++) {
+                    setTimeout(createHeart, 100 * i);
+                }
+            }
+        }
+        
+        // ----- Message Rotation -----
         let currentMessageIndex = 0;
         let messageInterval;
         
         function changeMessage() {
-            messageElement.classList.add('message-fade');
+            messageEl.style.opacity = 0;
             
             setTimeout(() => {
                 currentMessageIndex = (currentMessageIndex + 1) % messages.length;
-                messageElement.textContent = messages[currentMessageIndex];
-                
-                setTimeout(() => {
-                    messageElement.classList.remove('message-fade');
-                }, 100);
-            }, 1000);
+                messageEl.textContent = messages[currentMessageIndex];
+                messageEl.style.opacity = 1;
+            }, 500);
         }
         
         function startMessageRotation() {
-            // Change message every 3 seconds, slower on low-power devices
             if (!messageInterval) {
-                messageInterval = setInterval(changeMessage, isLowPowerDevice ? 4000 : 3000);
+                messageInterval = setInterval(changeMessage, isLowPowerDevice ? 6000 : 5000);
             }
         }
         
-        // Handle messages visibility
-        document.addEventListener("visibilitychange", function() {
-            if (document.hidden) {
-                clearInterval(messageInterval);
-                messageInterval = null;
-            } else {
-                startMessageRotation();
-            }
-        });
-        
-        // Initial start
-        startMessageRotation();
-        
-        // Music controls - Improved for better compatibility
-        const music = document.getElementById('backgroundMusic');
-        const musicToggle = document.getElementById('musicToggle');
-        
-        // First try to use the HTML5 audio element
-        function toggleMusic() {
-            try {
-                if (music.paused) {
-                    const playPromise = music.play();
-                    
-                    if (playPromise !== undefined) {
-                        playPromise.then(_ => {
-                            musicToggle.textContent = 'Pause Music';
-                        }).catch(error => {
-                            console.log("Audio play failed, trying Web Audio API:", error);
-                            startBackgroundMusic(); // Fallback to Web Audio API
-                        });
-                    }
-                } else {
-                    music.pause();
-                    musicToggle.textContent = 'Play Music';
-                    
-                    // If we have a Web Audio context active, suspend it too
-                    if (audioContext && audioContext.state === 'running') {
-                        audioContext.suspend();
-                    }
-                }
-            } catch (e) {
-                console.log("Error with HTML5 Audio, trying Web Audio API:", e);
-                startBackgroundMusic();
-            }
-        }
-        
-        // Fallback Web Audio API if HTML5 Audio fails
+        // ----- Music Controls -----
         let audioContext;
         let oscillator;
-        let audioAttempted = false;
+        let musicPlaying = false;
         
-        function startBackgroundMusic() {
+        // Simplified approach to playing audio
+        function playMusic() {
             try {
-                if (audioAttempted && audioContext) {
-                    if (audioContext.state === 'suspended') {
-                        audioContext.resume();
-                        musicToggle.textContent = 'Pause Music';
-                    } else if (audioContext.state === 'running') {
-                        audioContext.suspend();
-                        musicToggle.textContent = 'Play Music';
-                    }
-                    return;
+                const playPromise = musicEl.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        musicPlaying = true;
+                        updateMusicUI(true);
+                    }).catch(error => {
+                        console.log("HTML5 Audio autoplay was prevented:", error);
+                        
+                        // If autoplay fails, we'll use the Web Audio API as fallback
+                        if (AUTOPLAY_MUSIC) {
+                            startWebAudio();
+                        }
+                    });
                 }
-                
-                audioAttempted = true;
-                
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                oscillator = audioContext.createOscillator();
-                const gainNode = audioContext.createGain();
-                
-                oscillator.type = 'sine';
-                oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
-                
-                gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                
-                oscillator.start();
-                musicToggle.textContent = 'Pause Music';
             } catch (e) {
-                console.log('Audio context error:', e);
-                musicToggle.textContent = 'Music Unavailable';
-                musicToggle.disabled = true;
+                console.error("Error playing music:", e);
+                if (AUTOPLAY_MUSIC) {
+                    startWebAudio();
+                }
             }
         }
         
-        musicToggle.addEventListener('click', toggleMusic);
-        
-        // Use passive event listener for better scrolling performance
-        document.addEventListener('touchstart', function() {}, {passive: true});
-        
-        // Surprise page controls - Only unlock on March 25
-        const surpriseButton = document.getElementById('surpriseButton');
-        const surprisePage = document.getElementById('surprisePage');
-        const backButton = document.getElementById('backButton');
-        const lockedMessage = document.getElementById('lockedMessage');
-        
-        function checkAnniversaryDate() {
-            // Get current date
-            const today = new Date();
-            
-            // Check if the date is March 25 (month 2 in JavaScript is March)
-            return (today.getMonth() === 2 && today.getDate() === 25);
-            
-            // For testing, uncomment this to always allow access:
-            // return true;
+        function pauseMusic() {
+            try {
+                musicEl.pause();
+                musicPlaying = false;
+                updateMusicUI(false);
+                
+                // Also pause Web Audio if it's running
+                if (audioContext && audioContext.state === 'running') {
+                    audioContext.suspend();
+                }
+            } catch (e) {
+                console.error("Error pausing music:", e);
+            }
         }
         
+        function toggleMusic() {
+            if (musicPlaying) {
+                pauseMusic();
+            } else {
+                playMusic();
+            }
+        }
+        
+        function updateMusicUI(isPlaying) {
+            musicToggle.textContent = isPlaying ? 'Pause Music ' : 'Play Music ';
+            if (isPlaying) {
+                musicIndicator.classList.remove('paused');
+            } else {
+                musicIndicator.classList.add('paused');
+            }
+        }
+        
+        // Web Audio API fallback
+        function startWebAudio() {
+            try {
+                if (!audioContext) {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    
+                    // Create oscillator for a simple melody
+                    oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.type = 'sine';
+                    
+                    // Simple melody pattern
+                    const notes = [440, 493.88, 523.25, 587.33, 659.25, 698.46, 783.99, 880];
+                    let noteIndex = 0;
+                    
+                    // Change note every second
+                    setInterval(() => {
+                        if (audioContext && audioContext.state === 'running') {
+                            noteIndex = (noteIndex + 1) % notes.length;
+                            oscillator.frequency.setValueAtTime(notes[noteIndex], audioContext.currentTime);
+                        }
+                    }, 1000);
+                    
+                    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    oscillator.start();
+                    musicPlaying = true;
+                    updateMusicUI(true);
+                } else if (audioContext.state === 'suspended') {
+                    audioContext.resume();
+                    musicPlaying = true;
+                    updateMusicUI(true);
+                }
+            } catch (e) {
+                console.error('Web Audio API error:', e);
+                musicToggle.textContent = 'Music Unavailable';
+                musicToggle.disabled = true;
+                musicIndicator.style.display = 'none';
+            }
+        }
+        
+        // ----- Anniversary Date Check -----
+        function checkAnniversaryDate() {
+            const today = new Date();
+            return (today.getMonth() === 2 && today.getDate() === 25); // March is month 2 (0-indexed)
+            
+            // For testing only - comment out in production
+            // return true; // Always allow access for testing
+        }
+        
+        // ----- Event Listeners -----
+        
+        // Surprise button click
         surpriseButton.addEventListener('click', function() {
             if (checkAnniversaryDate()) {
                 surprisePage.classList.add('active');
@@ -696,8 +807,34 @@
             }
         });
         
+        // Back button click
         backButton.addEventListener('click', function() {
             surprisePage.classList.remove('active');
+        });
+        
+        // Music toggle click
+        musicToggle.addEventListener('click', toggleMusic);
+        
+        // Page visibility changes
+        document.addEventListener("visibilitychange", function() {
+            if (document.hidden) {
+                clearInterval(heartInterval);
+                heartInterval = null;
+                clearInterval(messageInterval);
+                messageInterval = null;
+                
+                if (musicPlaying && !isIOS) { // iOS doesn't like auto-pausing
+                    pauseMusic();
+                }
+            } else {
+                startHeartAnimation();
+                startMessageRotation();
+                
+                // Resume music if it was playing before
+                if (musicPlaying && !isIOS) {
+                    playMusic();
+                }
+            }
         });
         
         // Handle device orientation changes and resize
@@ -709,29 +846,35 @@
         window.addEventListener('resize', handleResize);
         window.addEventListener('orientationchange', handleResize);
         
-        // Initial call
-        handleResize();
+        // Passive event listener for better scrolling performance
+        document.addEventListener('touchstart', function() {}, {passive: true});
         
-        // Set default text content for user agent that might not have autoplay
-        if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-            musicToggle.textContent = 'Play Music';
+        // ----- Initialization -----
+        
+        // Initialize UI
+        handleResize();
+        startHeartAnimation();
+        startMessageRotation();
+        
+        // Try to autoplay music (will likely be blocked by browsers but we try)
+        if (AUTOPLAY_MUSIC) {
+            // Wait for a user interaction
+            document.addEventListener('click', function initAudioOnFirstClick() {
+                playMusic();
+                document.removeEventListener('click', initAudioOnFirstClick);
+            }, {once: true});
+            
+            // Also attempt autoplay directly (might work on some browsers)
+            setTimeout(playMusic, 1000);
         }
         
-        // Check if we're getting close to the anniversary
+        // Update the days remaining for current date: March 8, 2025
+        // Current date is 17 days before the anniversary (March 25, 2025)
         const now = new Date();
         const daysUntilAnniversary = Math.floor((targetDate - now) / (1000 * 60 * 60 * 24));
         
-        if (daysUntilAnniversary <= 17) {
-            // We're within about 2 weeks, check if we're on March 25
-            if (checkAnniversaryDate()) {
-                // Today is the anniversary! Show a special greeting
-                document.title = "Happy Anniversary, Shahara! ❤️";
-            }
-        }
-        
-        // Since today is March 8, 2025 and the anniversary is on March 25, 2025, 
-        // let's update the title to reflect we're getting closer
-        document.title = "Only " + daysUntilAnniversary + " Days Until Our Anniversary! ❤️";
+        // Update title with countdown
+        document.title = `${daysUntilAnniversary} Days Until Our Anniversary! ❤️`;
     </script>
 </body>
 </html>
