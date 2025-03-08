@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Beautiful Shahara</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 3em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: fadeIn 2s;
+        }
+
+        .heart {
+            color: #ff1a1a;
+            font-size: 2em;
+            animation: float 3s infinite;
+        }
+
+        .message {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            backdrop-filter: blur(5px);
+        }
+
+        #photo-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        #photo-gallery img {
+            width: 100%;
+            border-radius: 10px;
+            transition: transform 0.3s;
+        }
+
+        #photo-gallery img:hover {
+            transform: scale(1.05);
+        }
+
+        .surprise-button {
+            background: white;
+            color: #ff6b6b;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.2em;
+            cursor: pointer;
+            margin: 20px 0;
+            transition: transform 0.3s;
+        }
+
+        .surprise-button:hover {
+            transform: scale(1.1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>❤️ For My Shahara ❤️</h1>
+        
+        <div class="message">
+            <p class="heart">🎀</p>
+            <p>To the most amazing woman in my life...</p>
+            <p>Every moment with you is a precious gift 💝</p>
+        </div>
+
+        <div id="photo-gallery">
+            <!-- Add your photos here -->
+            <img src="your-photo1.jpg" alt="Our Memory">
+            <img src="your-photo2.jpg" alt="Our Adventure">
+            <img src="your-photo3.jpg" alt="Our Love">
+        </div>
+
+        <button class="surprise-button" onclick="showSurprise()">Click for a Surprise!</button>
+
+        <div id="specialMessage" style="display: none;">
+            <h2>10 Reasons I Love You:</h2>
+            <div class="message">
+                <ol>
+                    <li>Your beautiful smile that lights up my world</li>
+                    <li>Your kind and caring heart</li>
+                    <li>The way you make every day special</li>
+                    <li>Your strength and resilience</li>
+                    <li>Your amazing [motherly/wifely] love</li>
+                    <li>The way you understand me like no one else</li>
+                    <li>Your incredible [specific quality]</li>
+                    <li>The joy you bring to everyone around you</li>
+                    <li>Your perfect imperfections</li>
+                    <li>Simply because you're YOU!</li>
+                </ol>
+                <p class="heart">💌</p>
+                <p>Forever yours,<br>[Your Name]</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showSurprise() {
+            document.getElementById('specialMessage').style.display = 'block';
+            document.querySelector('.surprise-button').style.display = 'none';
+            // Add confetti effect
+            const colors = ['#ff1a1a', '#ffffff', '#ffd700'];
+            for(let i = 0; i < 50; i++) {
+                const heart = document.createElement('div');
+                heart.style.position = 'fixed';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animation = `float ${2 + Math.random() * 3}s infinite`;
+                heart.style.fontSize = `${20 + Math.random() * 20}px`;
+                heart.style.color = colors[Math.floor(Math.random() * colors.length)];
+                heart.innerHTML = '❤️';
+                document.body.appendChild(heart);
+            }
+        }
+    </script>
+</body>
+</html>
