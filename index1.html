@@ -16,6 +16,7 @@
             margin: 0;
             padding: 0;
             min-height: 100vh;
+            width: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -28,7 +29,7 @@
         .container {
             text-align: center;
             z-index: 1;
-            padding: 1.5rem;
+            padding: clamp(1rem, 4vw, 2rem);
             background-color: rgba(0, 0, 0, 0.4);
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
@@ -39,15 +40,15 @@
         
         h1 {
             margin-bottom: 0.5rem;
-            font-size: 2rem;
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
             text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
         }
         
         .message {
-            font-size: 1.3rem;
+            font-size: clamp(1rem, 3vw, 1.3rem);
             margin-bottom: 1.5rem;
             font-style: italic;
-            height: 80px;
+            height: clamp(60px, 15vh, 90px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -61,24 +62,28 @@
             flex-wrap: wrap;
             justify-content: center;
             margin-bottom: 1.5rem;
+            gap: clamp(0.5rem, 2vw, 1rem);
         }
         
         .countdown-segment {
-            margin: 0.5rem;
+            margin: 0.3rem;
+            flex: 1 1 auto;
+            min-width: 60px;
+            max-width: 100px;
         }
         
         .countdown-number {
-            font-size: 2.5rem;
+            font-size: clamp(1.5rem, 6vw, 2.5rem);
             font-weight: bold;
             background-color: rgba(255, 255, 255, 0.1);
-            padding: 0.8rem;
+            padding: clamp(0.5rem, 2vw, 1rem);
             border-radius: 10px;
-            min-width: 65px;
+            min-width: clamp(50px, 15vw, 80px);
             display: inline-block;
         }
         
         .countdown-label {
-            font-size: 0.8rem;
+            font-size: clamp(0.7rem, 2vw, 0.9rem);
             text-transform: uppercase;
             margin-top: 0.3rem;
         }
@@ -94,7 +99,7 @@
         
         .heart {
             position: absolute;
-            font-size: 1.5rem;
+            font-size: clamp(1rem, 3vw, 1.5rem);
             animation: falling linear infinite;
             opacity: 0.6;
             user-select: none;
@@ -121,17 +126,18 @@
             margin-top: 1rem;
             display: flex;
             justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
         
         button {
             background-color: rgba(255, 255, 255, 0.2);
             border: none;
             color: white;
-            padding: 0.5rem 1rem;
+            padding: clamp(0.4rem, 2vw, 0.8rem) clamp(0.8rem, 3vw, 1.5rem);
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s;
-            margin: 0 0.5rem;
             -webkit-tap-highlight-color: transparent;
             touch-action: manipulation;
         }
@@ -140,18 +146,11 @@
             background-color: rgba(255, 255, 255, 0.3);
         }
         
-        .footer {
-            position: absolute;
-            bottom: 1rem;
-            font-size: 0.8rem;
-            opacity: 0.7;
-        }
-        
         .surprise-button {
             background-color: #ff4081;
             color: white;
-            padding: 0.8rem 1.5rem;
-            font-size: 1.1rem;
+            padding: clamp(0.6rem, 3vw, 1rem) clamp(1rem, 5vw, 2rem);
+            font-size: clamp(0.9rem, 3vw, 1.2rem);
             border-radius: 50px;
             border: none;
             margin-top: 1.5rem;
@@ -160,6 +159,9 @@
             box-shadow: 0 0 20px rgba(255, 64, 129, 0.6);
             transition: all 0.3s;
             -webkit-tap-highlight-color: transparent;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
         }
         
         .surprise-button:hover, .surprise-button:active {
@@ -189,7 +191,7 @@
             background: linear-gradient(135deg, #8a2387 0%, #e94057 50%, #f27121 100%);
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             flex-direction: column;
             z-index: 100;
             transform: translateY(100%);
@@ -207,22 +209,28 @@
             text-align: center;
             max-width: 800px;
             width: 100%;
-            padding: 1.5rem;
+            padding: clamp(1rem, 4vw, 2rem);
             background-color: rgba(255, 255, 255, 0.15);
             border-radius: 20px;
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            margin: 1rem 0;
+            margin: 1rem auto;
         }
         
         .surprise-page h2 {
-            font-size: 2rem;
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
             margin-bottom: 1.5rem;
             color: white;
         }
         
+        .surprise-page h3 {
+            font-size: clamp(1.2rem, 4vw, 1.8rem);
+            margin: 1.5rem 0;
+            color: white;
+        }
+        
         .surprise-page p {
-            font-size: 1.1rem;
+            font-size: clamp(0.9rem, 3vw, 1.2rem);
             margin-bottom: 1rem;
             line-height: 1.6;
             color: white;
@@ -231,9 +239,10 @@
         
         .surprise-gallery {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 0.8rem;
+            grid-template-columns: repeat(auto-fit, minmax(min(120px, 100%), 1fr));
+            gap: clamp(0.5rem, 2vw, 1rem);
             margin: 1.5rem 0;
+            width: 100%;
         }
         
         .placeholder-image {
@@ -246,22 +255,22 @@
             align-items: center;
             color: white;
             padding: 0.5rem;
-            font-size: 0.9rem;
+            font-size: clamp(0.8rem, 2.5vw, 1rem);
             text-align: center;
         }
         
         .back-button {
             background-color: white;
             color: #e94057;
-            padding: 0.8rem 1.5rem;
-            font-size: 1rem;
+            padding: clamp(0.6rem, 2vw, 0.8rem) clamp(1rem, 3vw, 1.5rem);
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
             border-radius: 50px;
             border: none;
-            margin-top: 1.5rem;
-            margin-bottom: 1rem;
+            margin: 1.5rem auto 1rem;
             cursor: pointer;
             transition: all 0.3s;
             -webkit-tap-highlight-color: transparent;
+            display: block;
         }
         
         .back-button:hover, .back-button:active {
@@ -286,7 +295,7 @@
         .locked-message {
             background-color: rgba(0, 0, 0, 0.8);
             color: white;
-            padding: 15px 20px;
+            padding: clamp(12px, 4vw, 20px);
             border-radius: 10px;
             position: fixed;
             top: 50%;
@@ -295,7 +304,7 @@
             z-index: 200;
             text-align: center;
             max-width: 90%;
-            width: 300px;
+            width: min(300px, 90vw);
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             animation: fadeIn 0.3s forwards;
             display: none;
@@ -303,11 +312,17 @@
         
         .locked-message h3 {
             margin-bottom: 10px;
+            font-size: clamp(1rem, 4vw, 1.3rem);
+        }
+        
+        .locked-message p {
+            font-size: clamp(0.9rem, 3vw, 1rem);
         }
         
         .locked-message button {
             margin-top: 15px;
             background-color: #ff4081;
+            font-size: clamp(0.8rem, 2.5vw, 1rem);
         }
         
         @keyframes fadeIn {
@@ -315,58 +330,30 @@
             to { opacity: 1; }
         }
         
-        /* Media queries for better mobile compatibility */
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 1.8rem;
+        /* Improved responsive styling */
+        @media (orientation: landscape) and (max-height: 500px) {
+            .container {
+                padding: 1rem;
+                margin: 0.5rem;
+            }
+            
+            .countdown {
+                margin-bottom: 0.8rem;
             }
             
             .message {
-                font-size: 1.1rem;
-                height: 90px;
-            }
-            
-            .countdown-number {
-                font-size: 2rem;
-                min-width: 55px;
-                padding: 0.6rem;
+                height: auto;
+                min-height: 50px;
+                margin-bottom: 1rem;
             }
             
             .surprise-button {
-                padding: 0.7rem 1.2rem;
-                font-size: 1rem;
+                margin-top: 0.8rem;
             }
             
-            .surprise-page h2 {
-                font-size: 1.7rem;
-            }
-            
-            .surprise-page p {
-                font-size: 1rem;
-            }
-            
-            .surprise-gallery {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            }
-        }
-        
-        @media (max-width: 350px) {
-            .countdown-segment {
-                margin: 0.3rem;
-            }
-            
-            .countdown-number {
-                font-size: 1.8rem;
-                min-width: 50px;
-                padding: 0.5rem;
-            }
-            
-            .countdown-label {
-                font-size: 0.7rem;
-            }
-            
-            .message {
-                height: 100px;
+            .surprise-content {
+                max-height: 85vh;
+                overflow-y: auto;
             }
         }
     </style>
@@ -489,16 +476,18 @@
             }
         }, 1000);
         
-        // Optimize heart creation for mobile
+        // Optimize heart creation based on device performance
         const heartsContainer = document.getElementById('hearts');
         const heartSymbols = ['❤️', '💕', '💖', '💗', '💓'];
-        const isMobile = window.innerWidth < 768;
-        const heartFrequency = isMobile ? 500 : 300; // Fewer hearts on mobile
-        const maxHearts = isMobile ? 15 : 30; // Limit total hearts on screen
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+        const isLowPowerDevice = isMobile && navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4;
+        const heartFrequency = isLowPowerDevice ? 800 : (isMobile ? 500 : 300);
+        const maxHearts = isLowPowerDevice ? 8 : (isMobile ? 15 : 30);
         let activeHearts = 0;
         
         function createHeart() {
             if (activeHearts >= maxHearts) return;
+            if (document.hidden) return; // Don't create hearts when page is not visible
             
             activeHearts++;
             const heart = document.createElement('div');
@@ -510,18 +499,40 @@
             
             // Remove heart after animation completes
             setTimeout(() => {
-                heart.remove();
+                if (heart.parentNode === heartsContainer) {
+                    heart.remove();
+                }
                 activeHearts--;
             }, 20000);
         }
         
-        // Create hearts periodically
-        setInterval(createHeart, heartFrequency);
+        let heartInterval;
         
-        // Initial hearts
-        for (let i = 0; i < (isMobile ? 10 : 20); i++) {
-            setTimeout(createHeart, 100 * i);
+        function startHeartAnimation() {
+            // Create hearts periodically
+            if (!heartInterval) {
+                heartInterval = setInterval(createHeart, heartFrequency);
+                
+                // Initial hearts - but fewer for low-power devices
+                const initialHearts = isLowPowerDevice ? 5 : (isMobile ? 10 : 20);
+                for (let i = 0; i < initialHearts; i++) {
+                    setTimeout(createHeart, 100 * i);
+                }
+            }
         }
+        
+        // Start heart animation when page becomes visible
+        document.addEventListener("visibilitychange", function() {
+            if (document.hidden) {
+                clearInterval(heartInterval);
+                heartInterval = null;
+            } else {
+                startHeartAnimation();
+            }
+        });
+        
+        // Initial start
+        startHeartAnimation();
         
         // Auto-changing messages - Bangla song romantic lines
         const messages = [
@@ -539,6 +550,7 @@
         
         const messageElement = document.getElementById('message');
         let currentMessageIndex = 0;
+        let messageInterval;
         
         function changeMessage() {
             messageElement.classList.add('message-fade');
@@ -553,8 +565,25 @@
             }, 1000);
         }
         
-        // Change message every 3 seconds
-        setInterval(changeMessage, 3000);
+        function startMessageRotation() {
+            // Change message every 3 seconds, slower on low-power devices
+            if (!messageInterval) {
+                messageInterval = setInterval(changeMessage, isLowPowerDevice ? 4000 : 3000);
+            }
+        }
+        
+        // Handle messages visibility
+        document.addEventListener("visibilitychange", function() {
+            if (document.hidden) {
+                clearInterval(messageInterval);
+                messageInterval = null;
+            } else {
+                startMessageRotation();
+            }
+        });
+        
+        // Initial start
+        startMessageRotation();
         
         // Music controls - Optimized for mobile
         const music = document.getElementById('backgroundMusic');
@@ -563,9 +592,13 @@
         // Create a simple audio context to simulate background music
         let audioContext;
         let oscillator;
+        let audioAttempted = false;
         
         function startBackgroundMusic() {
             try {
+                if (audioAttempted) return;
+                audioAttempted = true;
+                
                 if (!audioContext) {
                     audioContext = new (window.AudioContext || window.webkitAudioContext)();
                     oscillator = audioContext.createOscillator();
@@ -592,7 +625,9 @@
             }
         }
         
-        function toggleMusic() {
+        function toggleMusic(e) {
+            if (e) e.stopPropagation();
+            
             if (!audioContext || audioContext.state === 'suspended') {
                 startBackgroundMusic();
             } else {
@@ -602,10 +637,9 @@
         }
         
         musicToggle.addEventListener('click', toggleMusic);
-        musicToggle.addEventListener('touchend', function(e) {
-            e.preventDefault(); // Prevent double-trigger on mobile
-            toggleMusic();
-        }, { passive: false });
+        
+        // Use passive event listener for better scrolling performance
+        document.addEventListener('touchstart', function() {}, {passive: true});
         
         // Surprise page controls - Only unlock on March 25
         const surpriseButton = document.getElementById('surpriseButton');
@@ -614,15 +648,27 @@
         const lockedMessage = document.getElementById('lockedMessage');
         
         function checkAnniversaryDate() {
+            // Get current date - for testing purposes, you might want to modify this
+            // to simulate March 25 for testing the unlocked content
             const today = new Date();
-            return (today.getMonth() === 2 && today.getDate() === 25); // March is month 2 (0-indexed)
+            
+            // Check if the date is March 25 (month 2 in JavaScript is March)
+            return (today.getMonth() === 2 && today.getDate() === 25);
+            
+            // For testing, uncomment this to always allow access:
+            // return true;
         }
         
         surpriseButton.addEventListener('click', function() {
             if (checkAnniversaryDate()) {
                 surprisePage.classList.add('active');
             } else {
-                surprisePage.classList.add('active');
+                lockedMessage.style.display = 'block';
+                setTimeout(() => {
+                    if (lockedMessage.style.display === 'block') {
+                        lockedMessage.style.display = 'none';
+                    }
+                }, 3000);
             }
         });
         
@@ -630,31 +676,33 @@
             surprisePage.classList.remove('active');
         });
         
-        // Handle touch events properly for mobile
-        document.addEventListener('touchstart', function() {}, {passive: true});
+        // Handle device orientation changes and resize
+        function handleResize() {
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        }
         
-        // Handle device orientation changes
-        window.addEventListener('resize', function() {
-            // Update mobile detection
-            const wasDesktop = !isMobile;
-            const newIsMobile = window.innerWidth < 768;
-            
-            // Only update if there was a change in device type
-            if (wasDesktop !== newIsMobile) {
-                // Clear all hearts and recreate them for the new device type
-                heartsContainer.innerHTML = '';
-                activeHearts = 0;
-                
-                // Create initial hearts for the new device type
-                for (let i = 0; i < (newIsMobile ? 10 : 20); i++) {
-                    setTimeout(createHeart, 100 * i);
-                }
-            }
-        });
+        window.addEventListener('resize', handleResize);
+        window.addEventListener('orientationchange', handleResize);
+        
+        // Initial call
+        handleResize();
         
         // Set default text content for user agent that might not have autoplay
         if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
             musicToggle.textContent = 'Play Music';
+        }
+        
+        // Check if we're getting close to the anniversary
+        const now = new Date();
+        const daysUntilAnniversary = Math.floor((targetDate - now) / (1000 * 60 * 60 * 24));
+        
+        if (daysUntilAnniversary <= 17) {
+            // We're within about 2 weeks, check if we're on March 25
+            if (checkAnniversaryDate()) {
+                // Today is the anniversary! Show a special greeting
+                document.title = "Happy Anniversary, Shahara! ❤️";
+            }
         }
     </script>
 </body>
